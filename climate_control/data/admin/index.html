@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="pico.classless.min.css" />
+    <link rel="stylesheet" href="overrides.css"/>
+    <style>
+      form { display: none; }
+    </style>
+    <script src="alpine@2.8.2.min.js" defer></script>
+    <script>
+      if (String(location.pathname).endsWith('/') === false) {
+        console.log('Redirecting..');
+        location.assign(location.pathname + '/');
+      }
+    </script>
+    <title>Administration</title>
+  </head>
+  <body>
+    <main>
+      <p><img src="esp.jpg" style="display: block; width: 180px;"/></p>
+      <nav role="tab-control" x-data="nav()" x-init="show(location.hash || 'fan')">
+        <ul>
+          <li :class="{ 'active': tab === 'fan' }" @click="show('fan')">Fan</li>
+          <li :class="{ 'active': tab === 'wifi' }" @click="show('wifi')">Wifi</li>
+          <li :class="{ 'active': tab === 'telemetry' }" @click="show('telemetry')">Telemetry</li>
+          <li :class="{ 'active': tab === 'files' }" @click="show('files')">Files</li>
+          <li :class="{ 'active': tab === 'reboot' }" @click="show('reboot')">Reboot</li>
+        </ul>
+      </nav>
+      <!-- FAN -->
+      <form id="fan" x-data="settings($el.id)" @data="data = $event.detail">
+        <fieldset>
+          <legend>Fan:</legend>
+          <label>
+            <input type="checkbox" name="enabled" checked x-model="data.enabled"/>
+            Enabled
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Indoor temperature:</legend>
+          <label>
+            Too Cold (&deg;C)
+            <input name="cold" x-model.number="data.cold"/>
+          </label>
+          <label>
+            Too Hot (&deg;C)
+            <input name="hot" x-model.number="data.hot"/>
+          </label>
+          <label>
+            Buffer (&deg;C)
+            <input name="buffer" x-model.number="data.buffer"/>
+          </label>
+          <fieldset>
+            <legend data-tooltip="Swap the inside and outside sensors.">Swap Sensors:</legend>
+            <label>
+              <input type="checkbox" name="swapsensors" checked x-model="data.swapsensors"/>
+              Enabled
+            </label>
+          </fieldset>
+        </fieldset>
+        <button @click.prevent="save($event.target)">Save</button>
+        <br/>
+        <hr/>
+        <fieldset>
+          <legend>⚠️ Danger Zone:</legend>
+          <button class="red">Revert to Defaults</button>
+        </fieldset>
+      </form>
+      <!-- WIFI -->
+      <form id="wifi" x-data="settings($el.id)" @data="data = $event.detail">
+        <fieldset>
+          <legend>Direct Access Point for adminstration:</legend>
+          <label>
+            SSID
+            <input name="ssid" placeholder="ssid" x-model="data.ssid"/>
+          </label>
+          <label>
+            Password
+            <input name="password" placeholder="password" x-model="data.password"/>
+          </label>
+        </fieldset>
+        <fieldset>
+            <legend>Hidden SSID:</legend>
+          <label>
+            <input type="checkbox" name="hidden" x-model="data.hidden"/>
+            Enabled
+          </label>
+        </fieldset>
+        <button @click.prevent="save($event.target)">Save</button>
+        <br/>
+        <hr/>
+        <fieldset>
+          <legend>⚠️ Danger Zone:</legend>
+          <button class="red">Revert to Defaults</button>
+        </fieldset>
+      </form>
+      <!-- TELEMETRY -->
+      <form id="telemetry" x-data="settings($el.id)" @data="data = $event.detail">
+        <fieldset>
+          <legend>Connect to the internet, send data, and disconnect. <br/><i>(Works only if there are no connected clients)</i></legend>
+        </fieldset>
+        <fieldset>
+          <legend>Frequency:</legend>
+          <label>
+            <input type="radio" name="frequency" value="0" x-model.number="data.frequency"/>
+            Disabled
+          </label>
+          <label>
+            <input type="radio" name="frequency" value="1" x-model.number="data.frequency"/>
+            1 minute
+          </label>
+          <label>
+            <input type="radio" name="frequency" value="5" x-model.number="data.frequency"/>
+            5 minutes
+          </label>
+          <label>
+            <input type="radio" name="frequency" value="15" x-model.number="data.frequency"/>
+            15 minutes
+          </label>
+        </fieldset>
+        <fieldset>
+          <label>
+            InfluxDb Url (Use: InfluxDB UI -> Load Data -> Client Libraries)
+            <input name="url" placeholder="https://eu-central-1-1.aws.cloud2.influxdata.com" x-model="data.url"/>
+          </label>
+          <label>
+            InfluxDb Bucket (Use: InfluxDB UI -> Data -> Buckets)
+            <input name="bucket" placeholder="metrics" x-model="data.bucket"/>
+          </label>
+          <label>
+            Org (Use: InfluxDB UI -> User -> About -> Common Ids )
+            <input name="org" placeholder="myorg" x-model="data.org"/>
+          </label>
+          <label>
+            API Token (Use: InfluxDB UI -> Data -> Tokens)
+            <input name="token" placeholder="influxapitoken" x-model="data.token"/>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Access Point (with internet access):</legend>
+          <label>
+            SSID
+            <input name="ssid" placeholder="ssid" x-model="data.ssid"/>
+          </label>
+          <label>
+            Password
+            <input name="password" placeholder="password" x-model="data.password"/>
+          </label>
+        </fieldset>
+        <button @click.prevent="save($event.target)">Save</button>
+        <br/>
+        <hr/>
+        <fieldset>
+          <legend>⚠️ Danger Zone:</legend>
+          <button class="red">Revert to Defaults</button>
+        </fieldset>
+      </form>
+      <!-- FILES -->
+      <form id="files" x-data="files()" @data="data = $event.detail">
+        <div style="display: flex">
+          <progress x-bind:value="Math.round(data.used/data.total*100||0)" max="100"></progress>
+          <div><span x-text="Math.round(data.used/1024) + '/' + Math.round(data.total/1024)" style="padding-left: 1em"></span>Kb</div>
+        </div>
+        <table class="striped">
+          <tbody>
+            <template x-for="f in data.files || []" :key="f">
+              <tr>
+                <th scope="row" x-text="f.n"></th>
+                <td x-text="f.s"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </form>
+      <!-- REBOOT -->
+      <form id="reboot" x-data="settings($el.id)" @data="data = $event.detail">
+        <fieldset>
+          <legend>OTA Updates:</legend>
+          <label>
+            <input type="checkbox" name="ota" />
+            Enabled
+          </label>
+        </fieldset>
+        <fieldset>
+          <label>
+            Boot Key
+            <input name="key" placeholder="key" x-model="data.key"/>
+          </label>
+        </fieldset>
+        <button @click.prevent="save($event.target)">Save</button>
+        <br/>
+        <hr/>
+        <fieldset>
+          <legend>⚠️ Danger Zone:</legend>
+          <button class="red" @click.prevent="reboot()">Reboot</button>
+          <p>Please take note of your "SSID" and "Password" before rebooting.</p>
+        </fieldset>
+      </form>
+    </main>
+    <script>
+      const headers = { 'Content-Type': 'application/json' };
+      function nav() {
+        return {
+          tab: '',
+          async show(tab) {
+            if (!tab) return;
+            let delay = 200;
+            // Hash-based router
+            if (tab.indexOf('#') === 0) {
+              tab = tab.substring(1);
+              delay = 0;
+            }
+            location.hash = tab;
+            this.hideForms(tab);
+            this.loadData(tab);
+            this.showForm(tab);
+            this.tab = tab;
+          },
+          async hideForms(tab) {
+            for (const form of [...document.querySelectorAll('form')]) {
+              if (form.id !== tab) {
+                form.style.display = 'none';
+              }
+            }
+          },
+          async loadData(tab) {
+            const data = await fetch(`../settings/${tab}.json`).then(r => r.json());
+            console.log('fetch()', tab, data);
+            const e = new CustomEvent('data', { detail: data });
+            document.getElementById(tab).dispatchEvent(e);
+          },
+          async showForm(tab) {
+            for (const form of [...document.querySelectorAll('form')]) {
+              if (form.id === tab) {
+                form.style.display = 'block';
+              }
+            }
+          }
+        }
+      }
+      function files(f) {
+        return {
+          data: {}
+        }
+      }
+      function settings(file) {
+        const settings = {
+          fan: ['enabled', 'cold', 'hot', 'buffer', 'swapsensors'],
+          wifi: ['ssid', 'password', 'hidden'],
+          telemetry: ['frequency', 'url', 'bucket', 'org', 'token', 'ssid', 'password'],
+          boot: ['ota', 'key']
+        }
+        return {
+          data: {},
+          async save(button) {
+            if (button) button.setAttribute('aria-busy', true);
+            const url = `/settings/${file}.json`;
+            const data = {};
+            for (const field of settings[file]) {
+              data[field] = this.data[field];
+            }
+            const body = JSON.stringify(data);
+            console.log('POST', url, body);
+            const r = await fetch(url, { method: 'POST', body, headers });
+            if (button) button.setAttribute('aria-busy', false);
+            console.log(r.status, r.statusText);
+            if (r.status === 200) alert('Success!');
+            else alert('Failed!');
+          },
+          async reboot() {
+            if (file === 'reboot' && confirm('Reboot now?')) {
+              const headers = {'Authorization': `Bearer ${btoa(this.data.key)}`};
+              alert('Rebooting..');
+              const r = await fetch('/api/reboot', { method: 'POST', headers });
+              if (r.status === 200) alert('Success!');
+              else alert('Failed!');
+            }
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
