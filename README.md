@@ -6,11 +6,10 @@ This is a climate control circuit to use external temperature to modulate indoor
 
 # Components
 
-- 1x Pro Micro ATmega32U4 5V 18Mhz 
+- 1x ESP8266 Nodemcu (V3)
 - 2x DS18B20 waterproof temperature sensors
 - 1x 25W 100mm inline "duct" fan mounted on external air conduit
 - 1x 220V relay/octocoupler for 5V circuits
-- 1x I2C LCD Screen   
 
 ## 1x Pro Micro ATmega32U4 5V 18Mhz 
 
@@ -28,11 +27,6 @@ This is a climate control circuit to use external temperature to modulate indoor
 ## 1x 220V relay/octocoupler for 5V circuits
 
 <img src="relaymodule.jpg" width="400"/>
-
-## 1x I2C LCD Screen  
-
-<img src="lcd.front.png" width="400"/>
-<img src="lcd.back.png" width="400"/>
 
 # Hookup (LCD)
 
