@@ -28,15 +28,9 @@ This is a climate control circuit to use external temperature to modulate indoor
 
 <img src="relaymodule.jpg" width="400"/>
 
-# Hookup (LCD)
-
-Its much easier to setup an LCD using I2C, using 2 data cables instead of 6. 
-
-<img src="sensor-lcd.png" width="500"/>
-
 # Hookup (Multi Sensor)
 
-Using the "OneWire" protocol its possible to hook up multiple sensors on the same signal line.
+Using the "OneWire" protocol its possible to hook up multiple sensors on the same signal line, with a pull-up resistor at 5K (or 10K) ohm.
 
 <img src="multi-sensor.png" width="500"/>
 
