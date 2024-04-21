@@ -11,7 +11,7 @@ This is a climate control circuit to use external temperature to modulate indoor
 - 1x 25W 100mm inline "duct" fan mounted on external air conduit
 - 1x 220V relay/octocoupler for 5V circuits
 
-## 1x Pro Micro ATmega32U4 5V 18Mhz 
+## 1x ESP8266 Nodemcu (V3)
 
 <img src="espnodemcu.pinout.jpg" width="400"/>
 <img src="esp8266.tempsensor.jpg" width="400"/>
