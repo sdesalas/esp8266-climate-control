@@ -31,7 +31,7 @@
         </ul>
       </nav>
       <!-- FAN -->
-      <form id="fan" x-data="settings($el.id)" @data="data = $event.detail">
+      <form title="fan" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
           <legend>Fan:</legend>
           <label>
@@ -70,7 +70,7 @@
         </fieldset>
       </form>
       <!-- WIFI -->
-      <form id="wifi" x-data="settings($el.id)" @data="data = $event.detail">
+      <form title="wifi" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
           <legend>Direct Access Point for adminstration:</legend>
           <label>
@@ -98,7 +98,7 @@
         </fieldset>
       </form>
       <!-- TELEMETRY -->
-      <form id="telemetry" x-data="settings($el.id)" @data="data = $event.detail">
+      <form title="telemetry" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
           <legend>Connect to the internet, send data, and disconnect. <br/><i>(Works only if there are no connected clients)</i></legend>
         </fieldset>
@@ -159,24 +159,37 @@
         </fieldset>
       </form>
       <!-- FILES -->
-      <form id="files" x-data="files()" @data="data = $event.detail">
+      <form title="files" x-data="files()" @data="data = $event.detail">
         <div style="display: flex">
           <progress x-bind:value="Math.round(data.used/data.total*100||0)" max="100"></progress>
           <div><span x-text="Math.round(data.used/1024) + '/' + Math.round(data.total/1024)" style="padding-left: 1em"></span>Kb</div>
         </div>
         <table class="striped">
           <tbody>
-            <template x-for="f in data.files || []" :key="f">
+            <template x-for="f in flatten()" :key="f">
               <tr>
-                <th scope="row" x-text="f.n"></th>
-                <td x-text="f.s"></td>
+                <td style="white-space: nowrap;">
+                  <template x-if="f.l > 0">├</template>
+                  <template x-if="f.t === 'd'">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48">
+                      <path fill="#FFA000" d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z"></path><path fill="#FFCA28" d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z"></path>
+                    </svg>
+                  </template>
+                  <template x-if="f.t === 'f'">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 40 40">
+                      <path fill="#fff" d="M6.5 37.5L6.5 2.5 24.793 2.5 33.5 11.207 33.5 37.5z"></path><path fill="#788b9c" d="M24.586,3L33,11.414V37H7V3H24.586 M25,2H6v36h28V11L25,2L25,2z"></path><g><path fill="#fff" d="M24.5 11.5L24.5 2.5 24.793 2.5 33.5 11.207 33.5 11.5z"></path><path fill="#788b9c" d="M25,3.414L32.586,11H25V3.414 M25,2h-1v10h10v-1L25,2L25,2z"></path></g>
+                    </svg>
+                  </template>
+                </td>
+                <td scope="row" x-text="f.n"></td>
+                <td x-text="f.s > 0 ? f.s : ''"></td>
               </tr>
             </template>
           </tbody>
         </table>
       </form>
       <!-- REBOOT -->
-      <form id="reboot" x-data="settings($el.id)" @data="data = $event.detail">
+      <form title="reboot" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
           <legend>OTA Updates:</legend>
           <label>
@@ -221,7 +234,7 @@
           },
           async hideForms(tab) {
             for (const form of [...document.querySelectorAll('form')]) {
-              if (form.id !== tab) {
+              if (form.title !== tab) {
                 form.style.display = 'none';
               }
             }
@@ -230,11 +243,11 @@
             const data = await fetch(`../settings/${tab}.json`).then(r => r.json());
             console.log('fetch()', tab, data);
             const e = new CustomEvent('data', { detail: data });
-            document.getElementById(tab).dispatchEvent(e);
+            document.querySelector(`[title=${tab}]`).dispatchEvent(e);
           },
           async showForm(tab) {
             for (const form of [...document.querySelectorAll('form')]) {
-              if (form.id === tab) {
+              if (form.title === tab) {
                 form.style.display = 'block';
               }
             }
@@ -243,7 +256,15 @@
       }
       function files(f) {
         return {
-          data: {}
+          data: {},
+          flatten() {
+            if (!this.data.files) return [];
+            return this.data.files.reduce((all, item) => {
+              all.push({l:0, ...item});
+              if (item.c) all.push(...item.c.map(f => ({l:1, ...f})));
+              return all;
+            },[])
+          }
         }
       }
       function settings(file) {
