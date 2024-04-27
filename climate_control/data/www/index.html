@@ -5,24 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Climate Control</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chartist@1.3.0.css">
+    <link rel="stylesheet" href="chartist.plugin.tooltip.css">
     <style>
-      body {
-        max-width: 900px;
-        margin: 0 auto;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-      canvas {
-        margin-bottom: 40px;
-      }
-
+      body { max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+      canvas { margin-bottom: 40px;}
       @media (max-width: 600px) {
-        canvas {
-          width: 100%;
-          height: 300px;
-        }
+        canvas { width: 100%; height: 300px; }
       }
+      h1 { font-size: 120%; text-align: center; padding: 0; margin: -1em 0 1.5em; }
+      .banner { display: flex; justify-content: space-around; text-align: center; margin: 1em 0 1.5em; }
+      dl, dd, dt { margin: 0; padding: 0; }
+      .banner dl { width: 28%; }
+      .banner dd { font-size: 24pt; font-weight: bold; }
+      .banner .box-green { padding: 3px 10px; background: #308230; color: white; }
+      .banner .box-blue { padding: 3px 10px; background: #234b96; color: white; }
+      .banner .box-red { padding: 3px 10px; background: #c32424; color: white; }
+      .banner .box-red.disabled { background: #999; }
+      .banner .box-red.disabled dd { visibility: hidden; font-size: 1pt; }
+      .banner .box-red.disabled dd:before { display: block; font-size: 22pt; visibility: visible; content: 'DISABLED'; }
+      footer { text-align: center; font-weight: 700; color: #777; margin-bottom: 2em; }
+      .ct-series-a .ct-point, .ct-series-a .ct-line { stroke: #308230; }
+      .ct-series-b .ct-point, .ct-series-b .ct-line { stroke: #234b96; }
+      .ct-series-c .ct-point, .ct-series-c .ct-line { stroke: #c32424; }
+
     </style>
   </head>
   <body>
@@ -34,13 +40,11 @@
     <dl class="box-red"><dt>Fan</dt><dd>OFF</dd></dl>
   </div>
   <div>
-    <canvas id="chart48h" style="height: 300px"></canvas>
-    <canvas id="chart7d" style="height: 300px"></canvas>
+    <div id="chart48h" class="ct-chart ct-perfect-fourth"></div>
   </div>
-  <footer>By Steven de Salas</footer>
-  <script src="chart-4.4.2.js"></script>
-  <script src="chart-adapter-date-fns.js"></script>
-	<script src="script48h.js"></script>
-  <script src="script7d.js"></script>
+  <footer></footer>
+  <script src="chartist@1.3.0.js"></script>
+  <script src="chartist.plugins.tooltip.min.js"></script>
+  <script src="script.js"></script>
   </body>
 </html>
