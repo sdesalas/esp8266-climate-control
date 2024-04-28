@@ -40,10 +40,21 @@ You can use a 5V or 3V module depending on preference. The circuit will support 
 
 <img src="relaymodule.jpg" width="400"/>
 
-# Hookup (Multi Sensor)
+## Hookup (Multi Sensor)
 
 Using the "OneWire" protocol its possible to hook up multiple sensors on the same signal line, with a pull-up resistor at 5K (or 10K) ohm.
 
 <img src="multi-sensor.png" width="500"/>
+
+
+# Features
+
+1. Graph-based UI showing indoor/outdoor temperatures
+2. Admin Web UI to configure temperatures and enable fan.
+3. Admin Web UI to configure Wifi settings
+4. Admin Web UI to configure Telemetry settings (InfluxDb)
+5. Admin Web UI to show local flash drive capacity
+6. Factory reset on FLASH button
+7. Remote REBOOT via Admin UI
 
 

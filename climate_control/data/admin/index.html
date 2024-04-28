@@ -33,7 +33,7 @@
       <!-- FAN -->
       <form title="fan" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
-          <legend>Fan:</legend>
+          <legend data-tooltip="Enables the fan on temperature readings." data-placement="right">Fan:</legend>
           <label>
             <input type="checkbox" name="enabled" checked x-model="data.enabled"/>
             Enabled
@@ -54,7 +54,7 @@
             <input name="buffer" x-model.number="data.buffer"/>
           </label>
           <fieldset>
-            <legend data-tooltip="Swap the inside and outside sensors.">Swap Sensors:</legend>
+            <legend data-tooltip="Swap the inside and outside sensors." data-placement="right">Swap Sensors:</legend>
             <label>
               <input type="checkbox" name="swapsensors" checked x-model="data.swapsensors"/>
               Enabled
@@ -63,16 +63,12 @@
         </fieldset>
         <button @click.prevent="save($event.target)">Save</button>
         <br/>
-        <hr/>
-        <fieldset>
-          <legend>⚠️ Danger Zone:</legend>
-          <button class="red">Revert to Defaults</button>
-        </fieldset>
+        <br/>
       </form>
       <!-- WIFI -->
       <form title="wifi" x-data="settings($el.title)" @data="data = $event.detail">
         <fieldset>
-          <legend>Direct Access Point for adminstration:</legend>
+          <legend>Access Point for adminstration:</legend>
           <label>
             SSID
             <input name="ssid" placeholder="ssid" x-model="data.ssid"/>
@@ -91,11 +87,7 @@
         </fieldset>
         <button @click.prevent="save($event.target)">Save</button>
         <br/>
-        <hr/>
-        <fieldset>
-          <legend>⚠️ Danger Zone:</legend>
-          <button class="red">Revert to Defaults</button>
-        </fieldset>
+        <br/>
       </form>
       <!-- TELEMETRY -->
       <form title="telemetry" x-data="settings($el.title)" @data="data = $event.detail">
@@ -152,11 +144,8 @@
         </fieldset>
         <button @click.prevent="save($event.target)">Save</button>
         <br/>
-        <hr/>
-        <fieldset>
-          <legend>⚠️ Danger Zone:</legend>
-          <button class="red">Revert to Defaults</button>
-        </fieldset>
+        <p>⚠️ NOTE: Please reboot after saving to apply telemetry settings.</p>
+        <br/>
       </form>
       <!-- FILES -->
       <form title="files" x-data="files()" @data="data = $event.detail">
@@ -274,7 +263,7 @@
           fan: ['enabled', 'cold', 'hot', 'buffer', 'swapsensors'],
           wifi: ['ssid', 'password', 'hidden'],
           telemetry: ['frequency', 'url', 'bucket', 'org', 'token', 'ssid', 'password'],
-          boot: ['ota', 'key']
+          reboot: ['ota', 'key']
         }
         return {
           data: {},
@@ -295,8 +284,7 @@
           },
           async reboot() {
             if (file === 'reboot' && confirm('Reboot now?')) {
-              const headers = {'Authorization': `Bearer ${btoa(this.data.key)}`};
-              alert('Rebooting..');
+              const headers = {'Authorization': `Bearer ${this.data.key}`};
               const r = await fetch('/api/reboot', { method: 'POST', headers });
               if (r.status === 200) alert('Success!');
               else alert('Failed!');

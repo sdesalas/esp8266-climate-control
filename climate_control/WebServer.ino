@@ -3,6 +3,7 @@
 #include <AsyncJson.h>
 
 AsyncWebServer server(80);
+Ticker rebootTimer;
 
 void WebServer_init()
 {
@@ -39,50 +40,59 @@ void WebServer_init()
     root["outside"] = metric.outside;
     root["fan"] = metric.fan;
     root["count"] = metric.count;
+    root["enabled"] = setting_fan_enabled;
     response->setLength();
     request->send(response);
   });
 
   server.addHandler(new AsyncCallbackJsonWebHandler("/settings/fan.json", [](AsyncWebServerRequest *request, JsonVariant &json) {
     Serial.println("POST /settings/fan.json");
-    Settings_save(json.as<JsonObject>(), "fan.json");
-    Settings_load("fan.json");
+    Settings_save(json.as<JsonObject>(), "fan");
+    Settings_load("fan");
     GPIO_blink(2, 10);
     request->send(200);
   }));
 
   server.addHandler(new AsyncCallbackJsonWebHandler("/settings/wifi.json", [](AsyncWebServerRequest *request, JsonVariant &json) {
     Serial.println("POST /settings/wifi.json");
-    Settings_save(json.as<JsonObject>(), "wifi.json");
-    Settings_load("wifi.json");
+    Settings_save(json.as<JsonObject>(), "wifi");
+    Settings_load("wifi");
     GPIO_blink(2, 10);
     request->send(200);
   }));
 
   server.addHandler(new AsyncCallbackJsonWebHandler("/settings/telemetry.json", [](AsyncWebServerRequest *request, JsonVariant &json) {
     Serial.println("POST /settings/telemetry.json");
-    Settings_save(json.as<JsonObject>(), "telemetry.json");
-    Settings_load("telemetry.json");
-    Telemetry_init();
+    Settings_save(json.as<JsonObject>(), "telemetry");
+    Settings_load("telemetry");
     GPIO_blink(2, 10);
     request->send(200);
   }));
 
   server.addHandler(new AsyncCallbackJsonWebHandler("/settings/reboot.json", [](AsyncWebServerRequest *request, JsonVariant &json) {
     Serial.println("POST /settings/reboot.json");
-    Settings_save(json.as<JsonObject>(), "reboot.json");
-    Settings_load("reboot.json");
+    Settings_save(json.as<JsonObject>(), "reboot");
+    Settings_load("reboot");
     GPIO_blink(2, 10);
     request->send(200);
   }));
 
   server.on("/api/reboot", HTTP_POST, [](AsyncWebServerRequest *request){
     Serial.println("POST /api/reboot");
-    // TODO: Check auth header vs setting
-    GPIO_blink(10, 10);
-    request->send(200);
-    delay(500);
-    ESP.restart();
+    if (request->hasHeader("Authorization")) {
+      String expected = "Bearer #";
+      expected.replace("#", setting_reboot_key);
+      if (request->header("Authorization") == expected) {
+        // Use timer otherwise we cant send reponse.
+        rebootTimer.once_ms_scheduled(500, []() {
+          GPIO_blink(GPIO_RED_LED, 5, SECOND);
+          ESP.restart();
+        });
+        request->send(200);
+        return;
+      }
+    }
+    request->send(401);
   });
 
   server.on("/settings/files.json", HTTP_GET, [](AsyncWebServerRequest *request){

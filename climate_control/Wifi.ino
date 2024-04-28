@@ -1,10 +1,5 @@
 
-// DNSServer dnsServer;
-IPAddress APIP(192, 168, 6, 1); // Gateway
-
-// const byte DNS_PORT = 53;
-
-// Ticker dnsTicker;
+IPAddress APIP(192, 168, 66, 1); // Admin IP
 Ticker blinker;
 
 void Wifi_init() {
@@ -14,19 +9,19 @@ void Wifi_init() {
   Serial.printf("Creating AP '%s' with password '%s'....\n", setting_wifi_ssid.c_str(),  setting_wifi_password.c_str());
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(APIP, APIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP(ssid, password);
-  // Serial.println("AP Created! Setting up DNS");
-  // DNS spoofing (Only for HTTP)
-  //dnsServer.start(DNS_PORT, "*", APIP);
-  // Check DNS redirect every 100 ms
-  // dnsTicker.attach_ms(100, []() {
-  //   dnsServer.processNextRequest();
-  // });
-  // Blink every 5 seconds
-  blinker.attach_ms_scheduled(5005, []() {
-    Serial.print("ESP.getFreeHeap(): ");
-    Serial.println(ESP.getFreeHeap());
-    GPIO_blink(WiFi.softAPgetStationNum() + 1, 100);
-    digitalWrite(GPIO_RED_LED, WiFi.softAPgetStationNum() > 0 ? 1 : 0);
-  });
+  if (WiFi.softAP(ssid, password, 1, setting_wifi_hidden)) {
+    Serial.println("AP Created!");
+    // Blink every 5 seconds
+    blinker.attach_ms_scheduled(5005, []() {
+      Serial.print("ESP.getFreeHeap(): ");
+      Serial.println(ESP.getFreeHeap());
+      GPIO_blink(WiFi.softAPgetStationNum() + 1, 100);
+      digitalWrite(GPIO_RED_LED, WiFi.softAPgetStationNum() > 0 ? 1 : 0);
+    });
+  } else {
+    Serial.println("Error! Cannot create AP. Reboot in 5 seconds..");
+    GPIO_blink(GPIO_RED_LED, 5, SECOND);
+    ESP.restart();
+  }
 }
+

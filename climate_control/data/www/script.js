@@ -3,7 +3,30 @@ const SECOND = 1000;
 const MINUTE = 60*SECOND;
 const HOUR = 60*MINUTE;
 
-(async () => {
+setTimeout(async () => { await updateBanner(); updateChart(); }, 1);
+
+async function updateBanner() {
+  const res = await fetch('../metrics/current.json');
+  if (res.ok) {
+    const json = await res.json();
+    if (json) {
+      const el = {
+        banner: document.querySelector('.banner'),
+        tempIn: document.getElementById('tempIn'),
+        tempOut: document.getElementById('tempOut'),
+        fan: document.getElementById('fan'),
+        fanEnabled: document.querySelector('.box-red'),
+      };
+      el.tempIn.innerText = `${json.inside}°C`;
+      el.tempOut.innerText = `${json.outside}°C`;
+      el.fan.innerText = json.onoff === 1 ? 'ON' : 'OFF';
+      if (!json.enabled) el.fanEnabled.classList.add('disabled');
+      el.banner.classList.remove('hidden');
+    }
+  }
+}
+
+async function updateChart() {
   const res = await fetch('../metrics/history.csv');
   if (res.ok) {
     const csv = await res.text();
@@ -46,9 +69,10 @@ const HOUR = 60*MINUTE;
       d2.push({ x, y: points[2]});
     }
     draw(data);
-    document.querySelector('footer').innerText = `Previous ${Math.round(range/HOUR)} hours`
+    document.querySelector('footer').innerText = `Previous ${Math.round(range/HOUR)} hours`;
+    document.getElementById('chart48h').classList.remove('hidden');
   }
-})();
+}
 
 function draw(data) {
   new Chartist.LineChart('.ct-chart', data,

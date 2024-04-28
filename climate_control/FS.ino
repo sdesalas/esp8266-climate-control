@@ -14,6 +14,10 @@ void FS_init() {
   Serial.println(info.totalBytes);
   Serial.print("Used Bytes: ");
   Serial.println(info.usedBytes);
+  Serial.print("Block Size: ");
+  Serial.println(info.blockSize);
+  Serial.print("Page Size: ");
+  Serial.println(info.pageSize);
   Serial.println("Listing directory: /");
   FS_list("/");
 }

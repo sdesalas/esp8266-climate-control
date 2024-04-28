@@ -1,6 +1,7 @@
 {
-  "inside": 190,
-  "outside": 158,
+  "inside": 21.0,
+  "outside": 15.8,
   "onoff": 0,
-  "count": 288
+  "count": 288,
+  "enabled": true
 }

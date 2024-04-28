@@ -15,18 +15,20 @@
       }
       h1 { font-size: 120%; text-align: center; padding: 0; margin: -1em 0 1.5em; }
       .banner { display: flex; justify-content: space-around; text-align: center; margin: 1em 0 1.5em; }
+      .hidden { opacity: 0; }
+      .reveal {transition: opacity 0.5s ease-in-out; }
       dl, dd, dt { margin: 0; padding: 0; }
       .banner dl { width: 28%; }
       .banner dd { font-size: 24pt; font-weight: bold; }
-      .banner .box-green { padding: 3px 10px; background: #308230; color: white; }
-      .banner .box-blue { padding: 3px 10px; background: #234b96; color: white; }
+      .banner .box-green { padding: 3px 10px; background: #33acbe; color: white; }
+      .banner .box-blue { padding: 3px 10px; background: #256bac; color: white; }
       .banner .box-red { padding: 3px 10px; background: #c32424; color: white; }
       .banner .box-red.disabled { background: #999; }
       .banner .box-red.disabled dd { visibility: hidden; font-size: 1pt; }
       .banner .box-red.disabled dd:before { display: block; font-size: 22pt; visibility: visible; content: 'DISABLED'; }
       footer { text-align: center; font-weight: 700; color: #777; margin-bottom: 2em; }
-      .ct-series-a .ct-point, .ct-series-a .ct-line { stroke: #308230; }
-      .ct-series-b .ct-point, .ct-series-b .ct-line { stroke: #234b96; }
+      .ct-series-a .ct-point, .ct-series-a .ct-line { stroke: #33acbe; }
+      .ct-series-b .ct-point, .ct-series-b .ct-line { stroke: #256bac; }
       .ct-series-c .ct-point, .ct-series-c .ct-line { stroke: #c32424; }
 
     </style>
@@ -34,13 +36,13 @@
   <body>
   <p><img src="fan.jpg" style="display: block; width: 120px; margin: 0 auto"/></p>
   <h1>Climate Control</h1>
-  <div class="banner">
-    <dl class="box-green"><dt>Inside</dt><dd>21.4&deg;C</dd></dl>
-    <dl class="box-blue"><dt>Outside</dt><dd>17.8&deg;C</dd></dl>
-    <dl class="box-red"><dt>Fan</dt><dd>OFF</dd></dl>
+  <div class="banner hidden reveal">
+    <dl class="box-green"><dt>Inside</dt><dd id="tempIn">&#9632;&deg;C</dd></dl>
+    <dl class="box-blue"><dt>Outside</dt><dd id="tempOut">&#9632;&deg;C</dd></dl>
+    <dl class="box-red"><dt>Fan</dt><dd id="fan">&#9632;</dd></dl>
   </div>
   <div>
-    <div id="chart48h" class="ct-chart ct-perfect-fourth"></div>
+    <div id="chart48h" class="ct-chart ct-perfect-fourth hidden reveal"></div>
   </div>
   <footer></footer>
   <script src="chartist@1.3.0.js"></script>

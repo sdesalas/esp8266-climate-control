@@ -31,6 +31,7 @@ String setting_telemetry_ssid = "";
 String setting_telemetry_password = "";
 // "reboot" options 
 boolean setting_reboot_ota = false;
+String setting_reboot_key = "";
 
 void setup() {
   Board_init();
@@ -47,5 +48,6 @@ void setup() {
 }
 
 void loop() {
-  
+  // Do nothing here.
+  // Its all handled with timers and interrupts.
 }

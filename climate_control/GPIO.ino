@@ -2,6 +2,8 @@
 #include "OneWire.h"
 #include "DallasTemperature.h"
 
+#define GPIO_FACTORY_RESET 0 // "FLASH" pin
+#define GPIO_RESET_DELAY (5*SECOND) // Press for 5 secs before flashing
 #define GPIO_ONE_WIRE_BUS 4 // (GPIO4 = D2)
 #define GPIO_RED_LED 14 // (GPIO14 = D5)
 #define GPIO_BLUE_LED (BUILTIN_LED) // TODO: (GPIO13 = D7)
@@ -11,6 +13,24 @@
 OneWire gpio_oneWire(GPIO_ONE_WIRE_BUS);
 DallasTemperature gpio_sensors(&gpio_oneWire);
 int gpio_device_count;
+Ticker resetCheck;
+
+void ICACHE_RAM_ATTR GPIO_factoryReset() {
+  Serial.println("FLASH pin pressed.");
+  // Check if still pressed 5 seconds later
+  resetCheck.once_ms_scheduled(GPIO_RESET_DELAY, []() {
+    if (digitalRead(GPIO_FACTORY_RESET) == LOW) { // LOW = pressed (INPUT_PULLUP)
+      GPIO_blink(GPIO_RED_LED, 10, 100);
+      Serial.println("WARNING! Factory reset detected.");
+      Serial.println("Resetting in 5 seconds..");
+      GPIO_blink(GPIO_RED_LED, 5, SECOND);
+      Settings_reset();
+      ESP.restart();
+    } else {
+      Serial.println("FALSE ALARM. Skipping factory reset.");
+    };
+  });
+}
 
 void GPIO_init() {
   Serial.print("GPIO_init()");
@@ -18,9 +38,12 @@ void GPIO_init() {
   pinMode(GPIO_BLUE_LED, OUTPUT); 
   pinMode(GPIO_RED_LED, OUTPUT);
   pinMode(GPIO_FAN_RELAY, OUTPUT);
+  pinMode(GPIO_FACTORY_RESET, INPUT_PULLUP); // DO NOT CHANGE, "FLASH" pin starts HIGH
   digitalWrite(GPIO_RED_LED, 0);
   digitalWrite(GPIO_BLUE_LED, 0);
   digitalWrite(GPIO_FAN_RELAY, 0);
+  // Add factory reset interrupt
+  attachInterrupt(digitalPinToInterrupt(GPIO_FACTORY_RESET), GPIO_factoryReset, FALLING);
   // Initialize sensors
   gpio_sensors.begin();
   // Locate the devices on the bus:
