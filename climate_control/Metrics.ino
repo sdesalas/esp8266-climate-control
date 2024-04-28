@@ -27,9 +27,11 @@ void Metrics_init() {
   if (LittleFS.exists(filepath)) {
     Metrics_load(filepath.c_str());
   }
+  // Set timers for collection and storage
   metricsCollection.attach_ms_scheduled(METRICS_COLLECT_FREQUENCY, Metrics_collect);
   metricsStorage.attach_ms_scheduled(METRICS_STORAGE_FREQUENCY, Metrics_store);
   Metrics_collect();
+  Metrics_store();
 }
 
 void Metrics_load(const char * path) {
