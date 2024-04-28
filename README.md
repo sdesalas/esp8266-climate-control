@@ -57,4 +57,11 @@ Using the "OneWire" protocol its possible to hook up multiple sensors on the sam
 6. Factory reset on FLASH button
 7. Remote REBOOT via Admin UI
 
+## Connect via Wifi and open Graph Based UI
+
+![part1.connect.png](part1.connect.png)
+
+## Admin Web UI
+
+![part2.admin.png](part2.admin.png)
 

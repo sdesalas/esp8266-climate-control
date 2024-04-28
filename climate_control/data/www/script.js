@@ -17,9 +17,9 @@ async function updateBanner() {
         fan: document.getElementById('fan'),
         fanEnabled: document.querySelector('.box-red'),
       };
-      el.tempIn.innerText = `${json.inside}°C`;
-      el.tempOut.innerText = `${json.outside}°C`;
-      el.fan.innerText = json.onoff === 1 ? 'ON' : 'OFF';
+      el.tempIn.innerText = `${Number(json.inside).toFixed(1)}°C`;
+      el.tempOut.innerText = `${Number(json.outside).toFixed(1)}°C`;
+      el.fan.innerText = json.fan === 1 ? 'ON' : 'OFF';
       if (!json.enabled) el.fanEnabled.classList.add('disabled');
       el.banner.classList.remove('hidden');
     }
