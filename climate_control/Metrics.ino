@@ -134,3 +134,16 @@ void Metrics_rotate() {
     Serial.printf("Removed [%s]\n", rmPath.c_str());
   }
 }
+
+void Metrics_reset() {
+  // Deletes all the metric files
+  // Ie history.0.csv, history.1.csv, etc
+  Serial.println("Metrics_reset()");
+  for(int i = METRICS_FILE_COUNT; i >= 0; i--) {
+    String rmPath = METRICS_FILE_FORMAT;
+    rmPath.replace("#", String(i));
+    if (LittleFS.remove(rmPath)) {
+      Serial.printf("Deleted [%s]\n", rmPath.c_str());
+    }
+  }
+}

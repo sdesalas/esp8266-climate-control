@@ -4,9 +4,9 @@
 
 #define GPIO_FACTORY_RESET 0 // "FLASH" pin
 #define GPIO_RESET_DELAY (5*SECOND) // Press for 5 secs before flashing
-#define GPIO_ONE_WIRE_BUS 4 // (GPIO4 = D2)
-#define GPIO_RED_LED 14 // (GPIO14 = D5)
-#define GPIO_BLUE_LED (BUILTIN_LED) // TODO: (GPIO13 = D7)
+#define GPIO_ONE_WIRE_BUS 14 // (GPIO14 = D5)
+#define GPIO_RED_LED 12 // (GPIO12 = D6)
+#define GPIO_BLUE_LED (BUILTIN_LED) // (GPIO2 = D4)
 #define GPIO_FAN_RELAY 5 // (GPIO5 = D1)
 
 // Pass the oneWire reference to DallasTemperature library:
@@ -25,6 +25,7 @@ void ICACHE_RAM_ATTR GPIO_factoryReset() {
       Serial.println("Resetting in 5 seconds..");
       GPIO_blink(GPIO_RED_LED, 5, SECOND);
       Settings_reset();
+      Metrics_reset();
       ESP.restart();
     } else {
       Serial.println("FALSE ALARM. Skipping factory reset.");
@@ -39,6 +40,7 @@ void GPIO_init() {
   pinMode(GPIO_RED_LED, OUTPUT);
   pinMode(GPIO_FAN_RELAY, OUTPUT);
   pinMode(GPIO_FACTORY_RESET, INPUT_PULLUP); // DO NOT CHANGE, "FLASH" pin starts HIGH
+  pinMode(GPIO_ONE_WIRE_BUS, INPUT_PULLUP);
   digitalWrite(GPIO_RED_LED, 0);
   digitalWrite(GPIO_BLUE_LED, 0);
   digitalWrite(GPIO_FAN_RELAY, 0);
@@ -51,7 +53,7 @@ void GPIO_init() {
   Serial.print("-> ");
   gpio_device_count = gpio_sensors.getDeviceCount();
   Serial.print(gpio_device_count);
-  Serial.print(" devices");
+  Serial.println(" devices");
   delay(1000);
 }
 
