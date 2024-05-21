@@ -62,6 +62,7 @@ async function updateChart() {
     const start = Date.now() - range;
     for (let i = 0; i < measurements.length; i++) {
       const line = measurements[i];
+      if (!line) continue;
       const x = new Date(start + (i*frequency));
       const points = line.split(',').map(p => Number(String(p).trim()));
       d0.push({ x, y: points[0]});
