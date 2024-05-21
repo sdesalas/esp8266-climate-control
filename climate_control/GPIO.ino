@@ -6,7 +6,7 @@
 #define GPIO_RESET_DELAY (5*SECOND) // Press for 5 secs before flashing
 #define GPIO_ONE_WIRE_BUS 14 // (GPIO14 = D5)
 #define GPIO_RED_LED 12 // (GPIO12 = D6)
-#define GPIO_BLUE_LED (BUILTIN_LED) // (GPIO2 = D4)
+#define GPIO_BLUE_LED 4 // (GPIO4 = D2)
 #define GPIO_FAN_RELAY 5 // (GPIO5 = D1)
 
 // Pass the oneWire reference to DallasTemperature library:
@@ -68,9 +68,9 @@ void GPIO_blink(int times, int pause) {
 void GPIO_blink(int pin, int times, int pause) {
   for (int i = 0; i < times; i++)
   {
-    digitalWrite(pin, 0);
-    delay(pause/2);
     digitalWrite(pin, 1);
+    delay(pause/2);
+    digitalWrite(pin, 0);
     delay(pause/2);
   }
 }

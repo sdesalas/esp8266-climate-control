@@ -54,15 +54,15 @@ async function updateChart() {
     const d2 = data.series[2].data;
     // Each measurement is 5 minutes apart, oldest first.
     // So we can calculate X axis timestamps.
-    const measurements = csv.split('\n');
+    const interval = 48*HOUR;
+    const frequency = 5*MINUTE;
+    const measurements = csv.split('\n').slice(-1*interval/frequency); // -> ie. Last 48 hours
     console.log(`We have ${measurements.length} measurements`)
-    const interval = 5 * MINUTE;
-    const range = (measurements.length * interval);
+    const range = (measurements.length * frequency);
     const start = Date.now() - range;
     for (let i = 0; i < measurements.length; i++) {
       const line = measurements[i];
-      if (!line || i > 48*HOUR/interval) continue; 
-      const x = new Date(start + (i*interval));
+      const x = new Date(start + (i*frequency));
       const points = line.split(',').map(p => Number(String(p).trim()));
       d0.push({ x, y: points[0]});
       d1.push({ x, y: points[1]});
