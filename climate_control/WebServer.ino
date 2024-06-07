@@ -12,7 +12,7 @@ void WebServer_init()
     AsyncResponseStream *response = request->beginResponseStream("text/csv");
     // Stream 3x history files backwards from oldest to newest
     // 48 hours of data minimum
-    for(int i = 3; i >= 0; i--) {
+    for(int i = 2; i >= 0; i--) {
       String path = METRICS_FILE_FORMAT;
       path.replace("#", String(i));
       Serial.print("Reading: ");
