@@ -10,7 +10,7 @@
 
 #define METRICS_COLLECT_FREQUENCY (1 * MINUTE)
 #define METRICS_STORAGE_FREQUENCY (5 * MINUTE)
-#define METRICS_BUFFER_SIZE (12*24) // Every 5 mins (12/hour), 24 hours worth of data = 288;
+#define METRICS_BUFFER_SIZE (24*HOUR / METRICS_STORAGE_FREQUENCY) // Every 5 mins (12/hour), 24 hours worth of data = 288;
 #define METRICS_FILE_COUNT 7 // 7 days of data
 #define METRICS_FILE_FORMAT "/metrics/history.#.csv" // 0 = today. 1 = yesterday etc.
 

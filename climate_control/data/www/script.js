@@ -3,7 +3,7 @@ const SECOND = 1000;
 const MINUTE = 60*SECOND;
 const HOUR = 60*MINUTE;
 
-setTimeout(async () => { await updateBanner(); updateChart(); }, 1);
+setTimeout(async () => { await updateBanner(); updateChart(offset); }, 1);
 
 async function updateBanner() {
   const res = await fetch('../metrics/current.json');
@@ -26,8 +26,9 @@ async function updateBanner() {
   }
 }
 
-async function updateChart() {
-  const res = await fetch('../metrics/history.csv');
+async function updateChart(offset) {
+  offset = Number(offset) || 0;
+  const res = await fetch(`../metrics/history.csv?offset=${offset}`);
   if (res.ok) {
     const csv = await res.text();
     // @see https://gionkunz.github.io/chartist-js/api-documentation.html
@@ -54,12 +55,12 @@ async function updateChart() {
     const d2 = data.series[2].data;
     // Each measurement is 5 minutes apart, oldest first.
     // So we can calculate X axis timestamps.
-    const interval = 48*HOUR;
+    const interval = 24*HOUR;
     const frequency = 5*MINUTE;
-    const measurements = csv.split('\n').slice(-1*interval/frequency); // -> ie. Last 48 hours
+    const measurements = csv.split('\n').slice(-1*interval/frequency); // -> ie. Max 24 hours
     console.log(`We have ${measurements.length} measurements`)
     const range = (measurements.length * frequency);
-    const start = Date.now() - range;
+    const start = Date.now() - interval*offset - range;
     for (let i = 0; i < measurements.length; i++) {
       const line = measurements[i];
       if (!line) continue;
@@ -70,7 +71,7 @@ async function updateChart() {
       d2.push({ x, y: points[2]});
     }
     draw(data);
-    document.querySelector('footer').innerText = `Previous ${Math.round(range/HOUR)} hours`;
+    document.querySelector('footer').innerText = `${Math.round(range/HOUR)} hours`;
     document.getElementById('chart48h').classList.remove('hidden');
   }
 }

@@ -7,7 +7,8 @@
 #include <Ticker.h>
 
 #define SECOND 1000
-#define MINUTE (60 * 1000)
+#define MINUTE (60 * SECOND)
+#define HOUR (60 * MINUTE)
 
 struct Metric { float inside; float outside; byte fan; short count; };
 

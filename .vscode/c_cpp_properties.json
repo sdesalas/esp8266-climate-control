@@ -47,6 +47,7 @@
             "includePath": [
                 "C:\\Users\\DellUser\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\tools\\sdk\\include",
                 "C:\\Users\\DellUser\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\tools\\sdk\\lwip2\\include",
+                "d:\\PROJECTS\\GITHUB\\sdesalas\\esp8266-climate-control\\build\\core",
                 "C:\\Users\\DellUser\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\cores\\esp8266",
                 "C:\\Users\\DellUser\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\variants\\nodemcu",
                 "C:\\Users\\DellUser\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\libraries\\LittleFS\\src",

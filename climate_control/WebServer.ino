@@ -7,27 +7,28 @@ Ticker rebootTimer;
 
 void WebServer_init()
 {
-  server.on("/metrics/history.csv", HTTP_GET, [](AsyncWebServerRequest *request){
+    server.on("/metrics/history.csv", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("GET /metrics/csv");
     AsyncResponseStream *response = request->beginResponseStream("text/csv");
-    // Stream 3x history files backwards from oldest to newest
-    // 48 hours of data minimum
-    for(int i = 2; i >= 0; i--) {
-      String path = METRICS_FILE_FORMAT;
-      path.replace("#", String(i));
-      Serial.print("Reading: ");
-      Serial.println(path);
-      File file = LittleFS.open(path.c_str(), "r");
-      if (file) {
-        char c;
-        while (file.available()) {
-          c = file.read();
-          response->write(c);
-        }
-        // Add EOL per file; 
-        if (c != '\n') response->write('\n');
-        file.close();
+    // Use querystring to determine which history file to return
+    String offset = "0";
+    if (request->hasParam("offset")) {
+      offset = request->arg("offset");
+    }
+    String path = METRICS_FILE_FORMAT;
+    path.replace("#", offset);
+    Serial.print("Reading: ");
+    Serial.println(path);
+    File file = LittleFS.open(path.c_str(), "r");
+    if (file) {
+      char c;
+      while (file.available()) {
+        c = file.read();
+        response->write(c);
       }
+      // Add EOL per file; 
+      if (c != '\n') response->write('\n');
+      file.close();
     }
     request->send(response);
   });
