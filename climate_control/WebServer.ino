@@ -7,8 +7,8 @@ Ticker rebootTimer;
 
 void WebServer_init()
 {
-    server.on("/metrics/history.csv", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("GET /metrics/csv");
+  server.on("/metrics/history.csv", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("GET /metrics/history.csv");
     AsyncResponseStream *response = request->beginResponseStream("text/csv");
     // Use querystring to determine which history file to return
     String offset = "0";
@@ -20,19 +20,10 @@ void WebServer_init()
     Serial.print("Reading: ");
     Serial.println(path);
     File file = LittleFS.open(path.c_str(), "r");
-    if (file) {
-      char c;
-      while (file.available()) {
-        c = file.read();
-        response->write(c);
-      }
-      // Add EOL per file; 
-      if (c != '\n') response->write('\n');
-      file.close();
-    }
-    request->send(response);
+    if (file) request->send(LittleFS, path, "text/csv");
+    else request->send(response);
   });
-
+  
   server.on("/metrics/current.json", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("GET /metrics/current.json");
     AsyncJsonResponse * response = new AsyncJsonResponse();

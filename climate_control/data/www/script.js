@@ -2,14 +2,17 @@
 const SECOND = 1000;
 const MINUTE = 60*SECOND;
 const HOUR = 60*MINUTE;
+const DAY = 24*HOUR;
 
 setTimeout(async () => { await updateBanner(); updateChart(offset); }, 1);
 
+let metrics = {};
 async function updateBanner() {
   const res = await fetch('../metrics/current.json');
   if (res.ok) {
     const json = await res.json();
     if (json) {
+      metrics = json;
       const el = {
         banner: document.querySelector('.banner'),
         tempIn: document.getElementById('tempIn'),
@@ -53,14 +56,18 @@ async function updateChart(offset) {
     const d0 = data.series[0].data;
     const d1 = data.series[1].data;
     const d2 = data.series[2].data;
-    // Each measurement is 5 minutes apart, oldest first.
-    // So we can calculate X axis timestamps.
-    const interval = 24*HOUR;
+    // Due to the need to minimize flash wear levelling, each CSV measurement
+    // is 5 minutes apart, oldest first, with a maximum of 24hrs per file.
+    // We need to take into account the remaining metrics count when viewing older files,
+    // as the starting time on each chart will be offset by that much.
+    // For example if the current metrics count has 6 hours worth of data,
+    // The starting X axis timestamp for each day will be set back by 6 hours from current time. 
     const frequency = 5*MINUTE;
-    const measurements = csv.split('\n').slice(-1*interval/frequency); // -> ie. Max 24 hours
-    console.log(`We have ${measurements.length} measurements`)
-    const range = (measurements.length * frequency);
-    const start = Date.now() - interval*offset - range;
+    const measurements = csv.split('\n');
+    const duration = measurements.length*frequency;
+    const remainder = (metrics.count||0)*frequency;
+    console.log(`We have ${measurements.length} measurements over ${Math.round(duration/HOUR)} hours, with ${Math.round(remainder/HOUR)} hours on latest file`)
+    const start = Date.now() - DAY*offset - remainder;
     for (let i = 0; i < measurements.length; i++) {
       const line = measurements[i];
       if (!line) continue;
@@ -71,7 +78,7 @@ async function updateChart(offset) {
       d2.push({ x, y: points[2]});
     }
     draw(data);
-    document.querySelector('footer').innerText = `${Math.round(range/HOUR)} hours`;
+    document.querySelector('footer').innerText = `${Math.round(duration/HOUR)} hours`;
     document.getElementById('chart48h').classList.remove('hidden');
   }
 }
@@ -112,7 +119,7 @@ function draw(data) {
 
 
 /*
-
+// @see https://gionkunz.github.io/chartist-js/examples.html#example-timeseries-moment
 new Chartist.LineChart('.ct-chart', 
   {
     series: [
