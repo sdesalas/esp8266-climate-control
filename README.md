@@ -75,3 +75,34 @@ Version 1 is breaboarded, for integration testing.
 <img src="img/v1.open.jpeg" width="600"/>
 <img src="img/v1.closeup.jpeg" width="600"/>
 
+
+# Deployment
+
+## Soldered breadboard (final version)
+
+Version 2 is soldered together. So I dont have care too much if it gets banged up a bit.
+
+<img src="img/v2.box.jpg" width="600"/>
+<img src="img/v2.topdown.jpg" width="600"/>
+<img src="img/v2.closeup.jpg" width="600"/>
+
+In the end I used a [Solid-State Relay](https://www.aliexpress.com/item/32838242762.html) that can handle up to 2A (1A safely).
+I was warned by a very experienced electronics engineer to be careful with solid state relays since you dont want 220V current 
+to ever mix in with low-power 5V electronics. Sooner or later something will give in and your electronics project
+will instantely get turned into a black sticky mess and a puff of smoke.
+
+Fortunately, as cheap as the aliexpress solid-state relays are, they use an optocoupler internally, meaning that there is no direct connection between circuits. Instead you get a small IR photo-sensor triggering the 220V pass-through circuit which is pretty safe, and most importantly, the failure state is NOT a black sticky mess, but simply the 220V circuit not turning on at all.
+
+I also used USB Type-A for the temperature sensors, which makes replacement very easy. So if I ever have to update the control unit I do not need to pull the sensor cables, just unplug them as you would any other computer peripheral.
+
+## Side-by-side
+
+I am keeping both versions together, the final version will be the primary, and the test prototype will be used as backup.
+
+<img src="img/v1v2.both.jpg" width="600"/>
+
+It actually makes a lot of sense to have 2 copies of the fininshed product, since the cost of development is prohibitive compared to the electronics components that I need to put another one together.
+
+I've probably spent close to 80 hours in total developing and testing, that would be around 5K+ EUR at market rates. Whereas
+the electronics components cost about 15-20 EUR aproximately per unit. 
+
