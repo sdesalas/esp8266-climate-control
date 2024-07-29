@@ -106,3 +106,27 @@ It actually makes a lot of sense to have 2 copies of the fininshed product, sinc
 I've probably spent close to 80 hours in total developing and testing, that would be around 5K+ EUR at market rates. Whereas
 the electronics components cost about 15-20 EUR aproximately per unit. 
 
+## Final Update: Reddit r/electronics: "Roast My Circuit"
+
+[<img src="img/reddit.png" width="600"/>](https://www.reddit.com/r/electronics/comments/1diov5t/roast_my_circuit)
+
+So I made a submission to `r/electronics` reddit and get some feedback asking the very experienced engineers there to "roast" my circuit. 
+
+The submission got deleted eventually but before it did I got some really useful feedback:
+
+1. The circuit is MISSING A FUSE, so if it short-circuits it will not only become a smoking pile of slag but it will actually become a fire hazard to the building where its in.
+2. USB is the wrong standard for the temp sensor plugs, as it makes it likely that someone will try plug something (like their phone) to see if it works.
+3. Should not be using perf board due to lack proper clearances working with 220V.
+4. Lack of mechanical strain relief creates added risks when mixing TTL 5V and mains 220V voltage.
+
+Out of these I implemented the first and most important point.
+
+### Adding a fuse
+
+I bought some 1A fuses off Aliexpress (2-3 EUR) and added them to the cable where they would not become a problem through mechanical strain.
+
+<img src="img/fuse.closeup.jpg" width="600"/>
+<img src="img/fuse.installed.jpg" width="600"/>
+
+
+
