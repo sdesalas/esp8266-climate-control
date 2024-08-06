@@ -110,7 +110,7 @@ the electronics components cost about 15-20 EUR aproximately per unit.
 
 [<img src="img/reddit.png" width="600"/>](https://www.reddit.com/r/electronics/comments/1diov5t/roast_my_circuit)
 
-So I made a submission to `r/electronics` reddit and get some feedback asking the very experienced engineers there to "roast" my circuit. 
+So I made a submission to [`r/electronics`](https://www.reddit.com/r/electronics/comments/1diov5t/roast_my_circuit) reddit and get some feedback asking the very experienced engineers there to "roast" my circuit. 
 
 The submission got deleted eventually but before it did I got some really useful feedback:
 
